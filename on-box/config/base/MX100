@@ -1,0 +1,39 @@
+system {
+    host-name Juniper_MX;
+    domain-name name;
+    root-authentication {
+        encrypted-password "$6$eIZPplhd$z1x3d/FckT4HskZHtVX1mgzEKz6Yepiy4XCx8085qCD6xgy8hw.BPXwMGuiOXxCFEWX3bHt02b9bh3DDcM8ZW."; ## SECRET-DATA
+    }
+    name-server {
+        192.168.25.10;
+    }
+    login {
+        user test {
+            uid 2000;
+            class super-user;
+            authentication {
+                encrypted-password "$6$EHTxrB/n$10/8IqwAA4nBVoMoliJ4/D2cTRE5vffphcPPi0MVEQhNnEWtYzZYVz85vep4ySfP6a3D3dmA0RnJdTz8Jl6ST/"; ## SECRET-DATA
+            }
+        }
+    }
+    services {
+        ssh;
+        telnet;
+    }
+}
+interfaces {
+    em0 {
+        unit 0 {
+            family inet {
+                dhcp;
+            }
+        }
+    }
+    em3 {
+        unit 0 {
+            family inet {
+                address 192.168.25.100/24;
+            }
+        }
+    }
+}

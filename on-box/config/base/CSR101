@@ -1,0 +1,41 @@
+hostname R101
+!
+ip domain name lab.com
+!
+username test privilege 15 password 0 test
+!
+crypto key generate rsa mod 1024
+!
+interface GigabitEthernet1
+ ip address 192.168.25.101 255.255.255.0
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+interface GigabitEthernet2
+ no ip address
+ shutdown
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+interface GigabitEthernet3
+ no ip address
+ shutdown
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+interface GigabitEthernet4
+ no ip address
+ shutdown
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+ip ssh version 2
+!
+line vty 0 4
+ login local
+ transport input all
+end
