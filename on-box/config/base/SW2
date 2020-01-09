@@ -4,6 +4,8 @@ username test privilege 15 password 0 test
 !
 ip domain-name lab.com
 !
+crypto key generate rsa modulus 1024
+!
 spanning-tree mode rapid-pvst
 spanning-tree extend system-id
 spanning-tree vlan 1 priority 0
