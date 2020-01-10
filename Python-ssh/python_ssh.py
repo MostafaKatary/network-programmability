@@ -19,7 +19,6 @@ COMMANDS_LIST_JUNIPER = {
     'show version | match Junos:',
     'show system users',
     'show interfaces terse | match inet'
-
 }
 
 
