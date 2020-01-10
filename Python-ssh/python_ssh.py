@@ -7,15 +7,32 @@ import yaml
 
 Vendor_Type = 'Cisco'
 
-COMMANDS_LIST = {
+COMMANDS_LIST_CISCO = {
     'show clock',
-    'show version | in image',
+    'show version | in Version',
     'show users',
     'show ip interface brief | ex unassigned'
 }
 
+COMMANDS_LIST_JUNIPER = {
+    'show system uptime',
+    'show version | match Junos:',
+    'show system users',
+    'show interfaces terse | match inet'
+
+}
+
 
 def read_pyaml(path='inventory.yml'):
+    """
+    Reads inventory yaml file and return dictionary with parsed values
+    Args:
+        path (str): path to inventory YAML
+
+    Returns:
+        dict: parsed inventory YAML values
+
+    """
     with open(path) as file:
         yaml_content = yaml.load(file.read(), Loader=yaml.FullLoader)
     return yaml_content
@@ -32,19 +49,15 @@ def form_connection_parameters_from_yaml(parsed_yaml, vendor='all'):
         dict: key is hostname, value is dict containing netmiko connection parameters for the host
     """
     parsed_yaml = deepcopy(parsed_yaml)
-    # result = {}
     global_params = parsed_yaml['all']['vars']
     site_dict = parsed_yaml['all']['groups'].get(vendor)
     if site_dict is None:
         raise KeyError('Site {} is not specified in inventory.yml'.format(vendor))
     for host in site_dict['hosts']:
         host_dict = {}
-        # hostname = host.pop('hostname')
         host_dict.update(global_params)
         host_dict.update(host)
         yield host_dict
-        # result[hostname] = host_dict
-    # return result
 
 
 def collect_outputs(devices, commands):
@@ -61,17 +74,25 @@ def collect_outputs(devices, commands):
     for device in devices:
         hostname = device.pop('hostname')
         connection = netmiko.ConnectHandler(**device)
-        device_result = ['=' * 20 + hostname + '=' * 20]
+        device_result = ['{0} {1} {0}'.format('=' * 20, hostname)]
         for command in commands:
             command_result = connection.send_command(command)
-            device_result.append('=' * 20 + command_result + '=' * 20)
+            device_result.append('{0} {1} {0}'.format('=' * 20, command))
+            device_result.append(command_result)
         device_result_string = '\n\n'.join(device_result)
+        connection.disconnect()
         yield device_result_string
 
 
 def main():
     parsed_yaml = read_pyaml()
     connection_params = form_connection_parameters_from_yaml(parsed_yaml, vendor=Vendor_Type)
+
+    if Vendor_Type == 'Cisco':
+        COMMANDS_LIST = COMMANDS_LIST_CISCO
+    elif Vendor_Type == 'Juniper':
+        COMMANDS_LIST = COMMANDS_LIST_JUNIPER
+
     for device_result in collect_outputs(connection_params, COMMANDS_LIST):
         print(device_result)
 
