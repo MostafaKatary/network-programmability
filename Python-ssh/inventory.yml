@@ -1,0 +1,26 @@
+all:
+  vars:
+    username: test
+    password: test
+  groups:
+    Cisco:
+      hosts:
+        - hostname: CSR-101
+          host: 192.168.25.101
+          device_type: cisco_ios
+        - hostname: CSR-102
+          host: 192.168.25.102
+          device_type: cisco_ios
+        - hostname: SW-111
+          host: 192.168.25.111
+          device_type: cisco_ios
+        - hostname: SW-222
+          host: 192.168.25.222
+          device_type: cisco_ios
+    Juniper:
+      hosts:
+        - hostname: Jun100
+          host: 192.168.25.100
+          username: test
+          password: test_test
+          device_type: juniper
