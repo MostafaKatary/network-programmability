@@ -72,14 +72,19 @@ def collect_outputs(devices, commands):
     """
     for device in devices:
         hostname = device.pop('hostname')
-        connection = netmiko.ConnectHandler(**device)
         device_result = ['{0} {1} {0}'.format('=' * 20, hostname)]
-        for command in commands:
-            command_result = connection.send_command(command)
-            device_result.append('{0} {1} {0}'.format('=' * 20, command))
-            device_result.append(command_result)
+
+        try:
+            connection = netmiko.ConnectHandler(**device)
+            for command in commands:
+                command_result = connection.send_command(command)
+                device_result.append('{0} {1} {0}'.format('=' * 20, command))
+                device_result.append(command_result)
+            connection.disconnect()
+        except netmiko.ssh_exception.NetMikoTimeoutException as e:
+            device_result.append(str(e))
+
         device_result_string = '\n\n'.join(device_result)
-        connection.disconnect()
         yield device_result_string
 
 
