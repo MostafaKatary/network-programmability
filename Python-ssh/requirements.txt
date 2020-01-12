@@ -1,3 +1,0 @@
-netmiko==2.4.2
-PyYAML==5.1.2
-netdev==0.9.3
